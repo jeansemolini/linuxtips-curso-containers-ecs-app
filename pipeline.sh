@@ -7,6 +7,7 @@ export AWS_ACCOUNT="211293005133"
 export AWS_PAGER=""
 export APP_NAME="linuxtips-app"
 export CLUSTER_NAME="linuxtips-ecs-cluster"
+export BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
 # CI DA APP
 
@@ -28,6 +29,8 @@ go test -v ./...
 echo "TERRAFORM - CI"
 
 cd ../terraform
+
+terraform init -backend-config=environment/$BRANCH_NAME/backend.tfvars
 
 echo "TERRAFORM - FORMAT CHECK"
 terraform fmt --recursive --check
@@ -88,9 +91,6 @@ echo "BUILD - DOCKER PUBLISH"
 docker push $AWS_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME:$GIT_COMMIT_HASH
 
 # APPLY DO TERRAFORM - CD
-
-BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-
 cd ../terraform
 
 REPOSITORY_TAG=$AWS_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/$REPOSITORY_NAME:$GIT_COMMIT_HASH

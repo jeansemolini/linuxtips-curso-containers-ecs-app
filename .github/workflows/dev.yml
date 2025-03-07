@@ -1,0 +1,38 @@
+name: CI/CD Pipeline - Dev
+
+on:
+    push:
+        branches:
+            - dev
+
+env:
+    AWS_ACCOUNT: "211293005133"
+    AWS_REGION: "us-east-1"
+    APP_NAME: "linuxtips-app"
+    CLUSTER_NAME: "linuxtips-ecs-cluster"
+    REPOSITORY_NAME: "linuxtips/$APP_NAME"
+
+jobs:
+    ci-app:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repository
+              uses: actions/checkout@v4
+            
+            - name: Setup Golang
+              uses: actions/setup-go@v5
+              with:
+                go-version: '1.22'  
+            
+            - name: Setup Golint
+              run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.59.1
+            
+            - name: Lint App
+              uses: golangci/golangci-lint-action@v6
+              with:
+                version: v1.64
+                working-directory: ./app    
+            
+            - name: Test App
+              run: go test -v ./...
+              working-directory: ./app  
