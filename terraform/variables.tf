@@ -13,6 +13,11 @@ variable "service_name" {
   description = "Nome do serviço que será usado dentro do cluster."
 }
 
+variable "container_image" {
+  type        = string
+  description = "Imagem com tag para deployment da aplicação no ECS"
+}
+
 variable "service_port" {
   type        = number
   description = "Porta TCP na qual o serviço aceitará tráfego."
